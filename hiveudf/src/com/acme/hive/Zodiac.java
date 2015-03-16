@@ -2,12 +2,12 @@ package com.acme.hive;
 
 /*
  * 
- hive
- add jar hiveudf-0.0.1-SNAPSHOT.jar;
- create temporary function zodiac AS 'de.metafinanz.sny.hiveudf.zodiac';
- describe function zodiac;
- describe function extended zodiac; 
- SELECT zodiac(8,29) FROM src;
+$ hive
+ADD JAR git/hiveudf/hiveudf/target/hiveudf-0.0.1-SNAPSHOT.jar;
+CREATE TEMPORARY FUNCTION zodiac AS 'com.acme.hive.Zodiac';
+DESCRIBE FUNCTION zodiac;
+DESCRIBE FUNCTION EXTENDED zodiac; 
+ SELECT zodiac(8,29) FROM dual;
  SELECT zodiac('1972-08-29') FROM dual;
  SELECT zodiac(to_date('1972-08-29 00:00:00')) FROM dual; -- processed as String
  SELECT zodiac(to_date(from_unixtime(unix_timestamp()))) FROM dual;
@@ -28,7 +28,7 @@ import org.apache.hadoop.hive.ql.exec.Description;
 		+ "SELECT _FUNC_(to_date('1972-08-29')) FROM src;\n"
 		+ "SELECT _FUNC_('1972-08-29') FROM src;\n"
 		+ "SELECT _FUNC_(8,29) FROM src;\n")
-public class zodiac extends UDF {
+public class Zodiac extends UDF {
 
 	private SimpleDateFormat df;
 
@@ -45,7 +45,7 @@ public class zodiac extends UDF {
 	private final String Scorpio = "Scorpio";
 	private final String Sagittarius = "Sagittarius";
 
-	public zodiac() {
+	public Zodiac() {
 		df = new SimpleDateFormat("yyyy-MM-dd");
 	}
 

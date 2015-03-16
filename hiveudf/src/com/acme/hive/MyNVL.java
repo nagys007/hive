@@ -1,12 +1,28 @@
 package com.acme.hive;
 
 /*
- *
+ * 1) create table DUAL (in database default)
+ * $ vi dual.txt
+ * X
+ * :wq
+ * 
+ * $ hdfs dfs -mkdir dual
+ * $ hdfs dfs -put dual.txt dual
+ * 
+ * $ hive
+ * hive> CREATE EXTERNAL TABLE dual (dummy STRING) STORED AS TEXTFILE LOCATION '/user/cloudera/dual';
+ * hive> exit;
+ * $
+ * 
+ * 2) test
  hive
- add jar hiveudf-0.0.1-SNAPSHOT.jar;
- create temporary function mynvl AS 'de.metafinanz.sny.hiveudf.mynvl';
- describe function mynvl;
- describe function extended mynvl;
+ ADD JAR git/hiveudf/hiveudf/target/hiveudf-0.0.1-SNAPSHOT.jar;
+ CREATE TEMPORARY FUNCTION myNVL AS 'com.acme.hive.MyNVL';
+ DESCRIBE FUNCTION MyNVL;
+ DESCRIBE FUNCTION EXTENDED MyNVL;
+ SELECT myNVL(1,2) as a FROM dual;
+ SELECT myNVL(null,2) as b FROM dual;
+ 
  SELECT myNVL(1,2) as a, myNVL(null,2) as b, 
  myNVL('c','string') as c, myNVL(null,'string') as d,
  myNVL(from_utc_timestamp('1972-08-29 00:00:00','CET'),from_unixtime(unix_timestamp())) as e,
@@ -31,7 +47,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 		+ "SELECT _FUNC_(1,2) FROM src; .. returns 1\n"
 		+ "SELECT _FUNC_(null,2) FROM src; .. returns 2\n"
 		+ "SELECT _FUNC_(null,'string or date or any other datatype possible too') FROM src;\n")
-public class mynvl extends GenericUDF {
+public class MyNVL extends GenericUDF {
 
 	private GenericUDFUtils.ReturnObjectInspectorResolver returnOIResolver;
 	private ObjectInspector[] argumentOIs;
@@ -47,7 +63,7 @@ public class mynvl extends GenericUDF {
 
 		returnOIResolver = new GenericUDFUtils.ReturnObjectInspectorResolver(
 				true);
-		argumentOIs = arguments;
+/*		argumentOIs = arguments;
 
 		if (!(returnOIResolver.update(arguments[0]) && returnOIResolver
 				.update(arguments[0]))) {
@@ -56,7 +72,7 @@ public class mynvl extends GenericUDF {
 					+ " must have the same data type,"
 					+ " but they are different: " + arguments[0].getTypeName()
 					+ " and " + arguments[1].getTypeName() + ".");
-		}
+		}*/
 		return returnOIResolver.get();
 	}
 
