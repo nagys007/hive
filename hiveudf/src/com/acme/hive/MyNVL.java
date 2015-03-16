@@ -28,16 +28,17 @@ SELECT myNVL(from_utc_timestamp('1972-08-29 00:00:00','CET'),from_utc_timestamp(
 SELECT myNVL(null,from_unixtime(unix_timestamp())) as f FROM dual;
 SELECT myNVL(1,2.0) as g FROM dual;
 SELECT myNVL(1,'conversion') as h FROM dual;
-
+-- all in one
  SELECT myNVL(1,2) as a, myNVL(null,2) as b, 
  myNVL('c','string') as c, myNVL(null,'string') as d,
- myNVL(from_utc_timestamp('1972-08-29 00:00:00','CET'),from_utc_timestamp(from_unixtime(unix_timestamp()),'CET')) as e
+ myNVL(from_utc_timestamp('1972-08-29 00:00:00','CET'),from_utc_timestamp(from_unixtime(unix_timestamp()),'CET')) as e,
  myNVL(null,from_unixtime(unix_timestamp())) as f,
  myNVL(1,2.0) as g, myNVL(1,'conversion') as h 
  FROM dual;
- Fails:
+-- Fails:
  SELECT myNVL(1) FROM dual;
  SELECT myNVL(1,2,3) FROM dual;
+ SELECT myNVL(from_utc_timestamp('1972-08-29 00:00:00','CET'),unix_timestamp()) FROM dual;
 
  */
 import org.apache.hadoop.hive.ql.exec.Description;
